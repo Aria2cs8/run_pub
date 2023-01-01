@@ -1,0 +1,58 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: download_fromyt
+
+env:
+  TZ: Asia/Shanghai 
+
+on:
+  # push:
+  #   branches: [ "main" ]
+  # pull_request:
+  #   branches: [ "main" ]
+  watch:
+   types: [started]
+  schedule:
+   - cron: 0 */6 * * *
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:    
+      matrix:
+        # cnt: [1]
+        cnt: [1, 2, 3, 4, 5]
+        # cnt: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        # cnt: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+      
+    # - name: Set up Python 3.7
+    #   uses: actions/setup-python@v3
+    #   with:
+    #     python-version: "3.7"
+    
+    - name: Run
+      run: |
+        set -x
+        git config --global user.name "Cosmos-Break"
+        git config --global user.email "438854233@qq.com"
+
+        echo start cnt: ${{ matrix.cnt }}
+        bash rclone_pre.sh
+        git clone https://cosmos-break:${{ secrets.COSMOS_KEY }}@github.com/Cosmos-Break/wool_bot.git --depth 1
+        cd wool_bot
+        python3 -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        bash pre_install.sh
+        python3 -V
+        which python3
+        which pip
+        # python3 -u hanime_actions.py
+        python3 -u kemono.py
+        

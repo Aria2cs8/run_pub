@@ -1,0 +1,51 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: download_fromyt
+
+env:
+  TZ: Asia/Shanghai 
+
+# on:
+#   # push:
+#   #   branches: [ "main" ]
+#   # pull_request:
+#   #   branches: [ "main" ]
+#   watch:
+#    types: [started]
+#   schedule:
+#    - cron: 0 */6 * * *
+
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:    
+      matrix:
+#         cnt: [1]
+        cnt: [1, 2, 3, 4]
+        # cnt: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        # cnt: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    - name: Run
+      run: |
+        echo start cnt: ${{ matrix.cnt }}
+        git clone https://cosmos-break:${{ secrets.COSMOS_KEY }}@github.com/Cosmos-Break/douyin_bot.git --depth 1
+        cd douyin_bot
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        bash pre_install.sh
+        mkdir -p ~/.config/rclone/
+        cp rclone.conf ~/.config/rclone/rclone.conf
+        git config --global user.name "Cosmos-Break"
+        git config --global user.email "438854233@qq.com"
+        rclone lsf od:/animal
+        python3 download_fromyt.py
