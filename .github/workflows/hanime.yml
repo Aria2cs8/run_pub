@@ -44,11 +44,8 @@ jobs:
         git config --global user.email "438854233@qq.com"
 
         echo start cnt: ${{ matrix.cnt }}
-        bash rclone_pre.sh
         git clone https://cosmos-break:${{ secrets.COSMOS_KEY }}@github.com/Cosmos-Break/wool_bot.git --depth 1
         cd wool_bot
-        python3 -m pip install --upgrade pip
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         bash pre_install.sh
         python3 -V
         which python3
